@@ -1,0 +1,1 @@
+web: gunicorn mtribune.wsgi --log-file -
