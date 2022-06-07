@@ -2,6 +2,11 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse,Http404
 import datetime as dt
 from .models import Article
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import  MoringaMerch
+from .serializer import MerchSerializer
+from rest_framework import status
 
 # Create your views here.
 def welcome(request):
@@ -77,3 +82,25 @@ def article(request,article_id):
     except :
         raise Http404()
     return render(request,"all-news/article.html", {"article":article})
+
+
+
+
+class MerchList(APIView):
+    def get(self, request, format=None):
+        all_merch = MoringaMerch.objects.all()
+        serializers = MerchSerializer(all_merch, many=True)
+        return Response(serializers.data)
+
+    def post(self, request, format=None):
+        form = MerchSerializer(data=request.data)
+        if form.is_valid():
+            form.save()
+            return Response(form.data, status=status.HTTP_201_CREATED)
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+    
